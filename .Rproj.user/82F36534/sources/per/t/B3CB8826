@@ -3,7 +3,7 @@
     "path": "~/unifi/sna/lab1.R",
     "project_path": "lab1.R",
     "type": "r_source",
-    "hash": "417851666",
+    "hash": "1382947440",
     "contents": "",
     "dirty": false,
     "created": 1655828948532.0,
@@ -13,15 +13,15 @@
         "tempName": "Untitled1",
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "24,0",
-        "scrollLine": "14"
+        "cursorPosition": "18,64",
+        "scrollLine": "5"
     },
     "folds": "",
-    "lastKnownWriteTime": 1655830266,
+    "lastKnownWriteTime": 1655874831,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1655830266327,
+    "last_content_update": 1655874831912,
     "read_only": false,
     "read_only_alternatives": []
 }
