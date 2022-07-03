@@ -237,8 +237,6 @@ data(package = 'igraphdata')
 # Zachary's karate club network
 data("karate")
 
-?karate
-
 # structure of the dataset
 karate
 
