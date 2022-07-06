@@ -18,7 +18,7 @@ library(igraph)
 # --------------------
 # 2. load the data
 # -------------------- 
-load("HighTechNetworks.Rdata")
+load("LAB 3/HighTechNetworks.Rdata")
 ls()
 # Relations between employees of a high-tech firm,
 # three types of relations are recorded for each node
