@@ -90,5 +90,213 @@ abline(v = rhoObs, col = "red", lwd = 2)
 # p-value
 mean(rhoSim >= rhoObs)
 
-# Experiment: in-degree centralitazion
+# Experiment: in-degree centralitazion and transitivity
+zidObs <- centr_degree(advice, mode = 'in', loops = FALSE)$centralization
+traObs <- transitivity(advice)
+
+zidSim <- c()
+traSim <- c()
+B <- 1000
+for (b in 1:B) {
+  Ysim <- matrix(rbinom(n^2, 1, p0), n, n)
+  diag(Ysim) <- NA
+  brg <- graph_from_adjacency_matrix(Ysim)
+  zidSim[b] <- centr_degree(brg, mode = 'in', loops = FALSE)$centralization
+  traSim[b] <- transitivity(brg)
+}
+
+par(mfrow = c(1, 2))
+hist(zidSim, col = 'lightgray', main = 'Null distribution')
+abline(v = zidObs, col = 'red', lwd = 2)
+hist(traSim, col = 'lightgray', main = 'Null distribution')
+abline(v = traObs, col = 'red', lwd = 2)
+
+# p-values
+mean(zidSim >= zidObs)
+mean(traSim >= traObs)
+
+# Using a maximum likelihood estimate of p
+pmle <- mean(Y, na.rm = TRUE)
+B <- 1000
+rhoSim <- c()
+zidSim <- c()
+traSim <- c()
+for (b in 1:B) {
+  Ysim <- matrix(rbinom(n^2, 1, pmle), n, n)
+  diag(Ysim) <- NA
+  brg <- graph_from_adjacency_matrix(Ysim)
+  rhoSim[b] <- mean(Ysim, na.rm = TRUE)
+  zidSim[b] <- centr_degree(brg, mode = 'in', loops = FALSE)$centralization
+  traSim[b] <- transitivity(brg)
+}
+
+# graphical comparison
+par(mfrow = c(1,3))
+low <- pmin(min(rhoSim), rhoObs) - 0.05
+up <- pmax(max(rhoSim), rhoObs) + 0.05
+hist(rhoSim, col = "lightgray", main = "Null distribution", xlim = c(low, up))
+abline(v = rhoObs, col = "red", lwd = 2)
+
+low <- pmin(min(zidSim), zidObs) - 0.05
+up <- pmax(max(zidSim), zidObs) + 0.05
+hist(zidSim, col = "lightgray", main = "Null distribution", xlim = c(low, up))
+abline(v = zidObs, col = "red", lwd = 2)
+
+low = pmin(min(traSim), traObs) - 0.05
+up = pmax(max(traSim), traObs) + 0.05
+hist(traSim, col = "lightgray", main = "Null distribution", xlim = c(low, up))
+abline(v = traObs, col = "red", lwd = 2)
+
+# p-values
+mean(rhoSim >= rhoObs)
+mean(zidSim >= zidObs)
+mean(traSim >= traObs)
+
+# using conditional uniform distribution
+B <- 5000
+m <- sum(Y, na.rm = TRUE)
+zidSim <- c()
+traSim <- c()
+for (b in 1:B) {
+  Ysim <- matrix(NA, n, n)
+  ones <- rep(1, m)
+  zeros <- rep(0, n*(n-1) - m)
+  Ysim[col(Ysim) != row(Ysim)] <- sample(c(zeros, ones), n*(n-1))
+  brg <- graph_from_adjacency_matrix(Ysim)
+  zidSim[b] <- centr_degree(brg, mode = 'in', loops = FALSE)$centralization
+  traSim[b] <- transitivity(brg)
+}
+
+low <- pmin(min(zidSim), zidObs) - 0.05
+up <- pmax(max(zidSim), zidObs) + 0.05
+hist(zidSim, col = "lightgray", main = "Null distribution", xlim = c(low, up))
+abline(v = zidObs, col = "red", lwd = 2)
+
+low = pmin(min(traSim), traObs) - 0.05
+up = pmax(max(traSim), traObs) + 0.05
+hist(traSim, col = "lightgray", main = "Null distribution", xlim = c(low, up))
+abline(v = traObs, col = "red", lwd = 2)
+
+# p-values
+mean(zidSim >= zidObs)
+mean(traSim >= traObs)
+
+# friend network
+Y <- get.adjacency(friend, sparse = FALSE)
+diag(Y) <- NA
+n <- nrow(Y)
+p0 <- 0.42
+
+rhoObs <- mean(Y, na.rm = TRUE)
+
+B <- 1000
+rhoSim <- c()
+for (b in 1:B) {
+  Ysim <- matrix(rbinom(n^2, 1, p0), n, n)
+  diag(Ysim) <- NA
+  rhoSim[b] <- mean(Ysim, na.rm = TRUE)
+}
+
+# graphical comparison
+par(mfrow = c(1,1))
+hist(rhoSim, col = "lightgray", main = "Null distribution")
+abline(v = rhoObs, col = "red", lwd = 2)
+
+# p-value
+mean(rhoSim >= rhoObs)
+
+# Experiment: in-degree centralitazion and transitivity
+zidObs <- centr_degree(advice, mode = 'in', loops = FALSE)$centralization
+traObs <- transitivity(advice)
+
+zidSim <- c()
+traSim <- c()
+B <- 1000
+for (b in 1:B) {
+  Ysim <- matrix(rbinom(n^2, 1, p0), n, n)
+  diag(Ysim) <- NA
+  brg <- graph_from_adjacency_matrix(Ysim)
+  zidSim[b] <- centr_degree(brg, mode = 'in', loops = FALSE)$centralization
+  traSim[b] <- transitivity(brg)
+}
+
+par(mfrow = c(1, 2))
+hist(zidSim, col = 'lightgray', main = 'Null distribution')
+abline(v = zidObs, col = 'red', lwd = 2)
+hist(traSim, col = 'lightgray', main = 'Null distribution')
+abline(v = traObs, col = 'red', lwd = 2)
+
+# p-values
+mean(zidSim >= zidObs)
+mean(traSim >= traObs)
+
+# Using a maximum likelihood estimate of p
+pmle <- mean(Y, na.rm = TRUE)
+B <- 1000
+rhoSim <- c()
+zidSim <- c()
+traSim <- c()
+for (b in 1:B) {
+  Ysim <- matrix(rbinom(n^2, 1, pmle), n, n)
+  diag(Ysim) <- NA
+  brg <- graph_from_adjacency_matrix(Ysim)
+  rhoSim[b] <- mean(Ysim, na.rm = TRUE)
+  zidSim[b] <- centr_degree(brg, mode = 'in', loops = FALSE)$centralization
+  traSim[b] <- transitivity(brg)
+}
+
+# graphical comparison
+par(mfrow = c(1,3))
+low <- pmin(min(rhoSim), rhoObs) - 0.05
+up <- pmax(max(rhoSim), rhoObs) + 0.05
+hist(rhoSim, col = "lightgray", main = "Null distribution", xlim = c(low, up))
+abline(v = rhoObs, col = "red", lwd = 2)
+
+low <- pmin(min(zidSim), zidObs) - 0.05
+up <- pmax(max(zidSim), zidObs) + 0.05
+hist(zidSim, col = "lightgray", main = "Null distribution", xlim = c(low, up))
+abline(v = zidObs, col = "red", lwd = 2)
+
+low = pmin(min(traSim), traObs) - 0.05
+up = pmax(max(traSim), traObs) + 0.05
+hist(traSim, col = "lightgray", main = "Null distribution", xlim = c(low, up))
+abline(v = traObs, col = "red", lwd = 2)
+
+# p-values
+mean(rhoSim >= rhoObs)
+mean(zidSim >= zidObs)
+mean(traSim >= traObs)
+
+# using conditional uniform distribution
+B <- 5000
+m <- sum(Y, na.rm = TRUE)
+zidSim <- c()
+traSim <- c()
+for (b in 1:B) {
+  Ysim <- matrix(NA, n, n)
+  ones <- rep(1, m)
+  zeros <- rep(0, n*(n-1) - m)
+  Ysim[col(Ysim) != row(Ysim)] <- sample(c(zeros, ones), n*(n-1))
+  brg <- graph_from_adjacency_matrix(Ysim)
+  zidSim[b] <- centr_degree(brg, mode = 'in', loops = FALSE)$centralization
+  traSim[b] <- transitivity(brg)
+}
+
+low <- pmin(min(zidSim), zidObs) - 0.05
+up <- pmax(max(zidSim), zidObs) + 0.05
+hist(zidSim, col = "lightgray", main = "Null distribution", xlim = c(low, up))
+abline(v = zidObs, col = "red", lwd = 2)
+
+low = pmin(min(traSim), traObs) - 0.05
+up = pmax(max(traSim), traObs) + 0.05
+hist(traSim, col = "lightgray", main = "Null distribution", xlim = c(low, up))
+abline(v = traObs, col = "red", lwd = 2)
+
+# p-values
+mean(zidSim >= zidObs)
+mean(traSim >= traObs)
+
+
+  
+  
 
