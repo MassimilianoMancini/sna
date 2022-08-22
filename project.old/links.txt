@@ -1,2 +1,42 @@
 https://www.stats.ox.ac.uk/~snijders/siena/BaerveldtData.html
 https://it.wikipedia.org/wiki/Istruzione_nei_Paesi_Bassi#VMBO/MAVO_en_LWOO
+
+
+
+report schema
+network description
+descriptive network statistics
+- density
+- reciprocity
+- transitivity
+- assortativity
+
+
+
+centrality measures
+- in degree centrality
+- out degree centrality
+- in closeness centrality
+- out closeness centrality
+- eigenvector centrality
+
+network centralization
+
+modeling
+- ergm
+- homogeneous SRGM
+- non homogeneous SRGM
+- P1
+- P1 with nodal attributes
+- markov graph model
+- social circuit model
+- aic bic
+- diagnostica
+- adeguamento modello
+
+
+
+conclusion
+- network sparso?
+- centralita?
+- modello piu adeguato?
