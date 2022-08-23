@@ -4,6 +4,7 @@ rm(list = ls())
 
 library(igraph)
 
+setwd("~/unifi/sna/project")
 
 Y <- as.matrix(read.table('HN34_10.DAT'))
 attrs <- read.table('CBE10.DAT')
