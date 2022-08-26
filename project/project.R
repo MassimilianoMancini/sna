@@ -84,7 +84,6 @@ plot(g,
      vertex.size = 10, 
      vertex.color = delinqColor, 
      main = 'Delinquent tendency')
-
 dev.off()
 
 set.seed(6)
@@ -104,21 +103,21 @@ inDegree <- degree(g, normalized = TRUE, mode = 'in')
 outDegree <- degree(g, normalized = TRUE, mode = 'out')
 
 set.seed(6)
+png(filename = 'indegree.png', width = 1024, height = 1024)
 plot(g, 
      vertex.size = inDegree*70, 
-     edge.arrow.size = 0.05, 
-     vertex.label.cex = 0.3, 
      vertex.color = delinqColor, 
      main = 'In Degree')
+dev.off()
 
 
 set.seed(6)
+png(filename = 'outdegree.png', width = 1024, height = 1024)
 plot(g, 
      vertex.size = outDegree*70, 
-     edge.arrow.size = 0.05, 
-     vertex.label.cex = 0.3, 
      vertex.color = delinqColor, 
      main = 'Out Degree')
+dev.off()
 
 print('Best 3 InDegree: ')
 sort(inDegree, decreasing = TRUE, index.return = TRUE)$x[1:3]
@@ -133,20 +132,20 @@ inCloseness <- closeness(gc, normalized = TRUE, mode = 'in')
 outCloseness <- closeness(gc, normalized = TRUE, mode = 'out')
 
 set.seed(6)
+png(filename = 'incloseness.png', width = 1024, height = 1024)
 plot(gc, 
      vertex.size = inCloseness*40, 
-     edge.arrow.size = 0.05, 
-     vertex.label.cex = 0.3, 
      vertex.color = delinqColor, 
      main = 'Closeness In')
+dev.off()
 
 set.seed(6)
+png(filename = 'outcloseness.png', width = 1024, height = 1024)
 plot(gc, 
      vertex.size = outCloseness*40, 
-     edge.arrow.size = 0.05, 
-     vertex.label.cex = 0.3, 
      vertex.color = delinqColor, 
      main = 'Closeness Out')
+dev.off()
 
 print('Best 3 InCloseness: ')
 sort(inCloseness, decreasing = TRUE, index.return = TRUE)$x[1:3]
@@ -159,12 +158,12 @@ betw <- betweenness(gc, normalized = TRUE)
 
 
 set.seed(6)
+png(filename = 'betweenness.png', width = 1024, height = 1024)
 plot(gc, 
      vertex.size = betw*70, 
-     edge.arrow.size = 0.05, 
-     vertex.label.cex = 0.3, 
      vertex.color = delinqColor, 
      main = 'Betweenness')
+dev.off()
 
 print('Best 3 Betweenness: ')
 sort(betw, decreasing = TRUE, index.return = TRUE)$x[1:3]
@@ -172,12 +171,12 @@ sort(betw, decreasing = TRUE, index.return = TRUE)$x[1:3]
 geigen <- eigen_centrality(gc, scale = TRUE)$vector
 
 set.seed(6)
+png(filename = 'eigen.png', width = 1024, height = 1024)
 plot(gc, 
      vertex.size = geigen*20, 
-     edge.arrow.size = 0.05, 
-     vertex.label.cex = 0.3, 
      vertex.color = delinqColor, 
      main = 'Eigenvector')
+dev.off()
 
 print('Best 3 Eigenvector: ')
 sort(geigen, decreasing = TRUE, index.return = TRUE)$x[1:3]
@@ -191,3 +190,4 @@ centr_clo(gc, mode = 'out')$centralization
 centr_betw(gc)$centralization
 
 centr_eigen(gc)$centralization
+
