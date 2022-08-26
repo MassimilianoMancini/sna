@@ -49,7 +49,7 @@ censusLabels = c('empty',
 
 data.frame(censusLabels, triad.census(g))
 
-tran <- transitivity(g)
+tran <- transitivity(g, type = 'global')
 oddsTran <- tran/(1-tran)
 
 standardizeTrans <- log(oddsTran) - log(oddsRho) 
@@ -69,28 +69,32 @@ pal = colorRampPalette(c('blue','white'))
 friendColor = pal(fine)[as.numeric(cut(V(g)$friend,breaks = fine))]
 
 set.seed(6)
+png(filename = 'gender.png', width = 1024, height = 1024)
+
 plot(g, 
      vertex.size = 10, 
-     edge.arrow.size = 0.05, 
-     vertex.label.cex = 0.3, 
      vertex.color = genderColor, 
      main = 'Gender')
+dev.off()
+
+png(filename = 'dt.png', width = 1024, height = 1024)
 
 set.seed(6)
 plot(g, 
      vertex.size = 10, 
-     edge.arrow.size = 0.05, 
-     vertex.label.cex = 0.3, 
      vertex.color = delinqColor, 
      main = 'Delinquent tendency')
 
+dev.off()
+
 set.seed(6)
+png(filename = 'fi.png', width = 1024, height = 1024)
 plot(g, 
      vertex.size = 10, 
-     edge.arrow.size = 0.05, 
-     vertex.label.cex = 0.3, 
      vertex.color = friendColor, 
      main = 'Friendship importance')
+dev.off()
+
 
 assortativity(g, V(g)$gender)
 assortativity(g, V(g)$delinq)
@@ -116,10 +120,10 @@ plot(g,
      vertex.color = delinqColor, 
      main = 'Out Degree')
 
-print('Best 3 In: ')
+print('Best 3 InDegree: ')
 sort(inDegree, decreasing = TRUE, index.return = TRUE)$x[1:3]
 
-print('Best 3 Out: ')
+print('Best 3 OutDegree: ')
 sort(outDegree, decreasing = TRUE, index.return = TRUE)$x[1:3]
 
 comps <- components(g, mode = 'strong')
@@ -144,7 +148,15 @@ plot(gc,
      vertex.color = delinqColor, 
      main = 'Closeness Out')
 
+print('Best 3 InCloseness: ')
+sort(inCloseness, decreasing = TRUE, index.return = TRUE)$x[1:3]
+
+print('Best 3 OutCloseness: ')
+sort(outCloseness, decreasing = TRUE, index.return = TRUE)$x[1:3]
+
+
 betw <- betweenness(gc, normalized = TRUE)
+
 
 set.seed(6)
 plot(gc, 
@@ -153,6 +165,9 @@ plot(gc,
      vertex.label.cex = 0.3, 
      vertex.color = delinqColor, 
      main = 'Betweenness')
+
+print('Best 3 Betweenness: ')
+sort(betw, decreasing = TRUE, index.return = TRUE)$x[1:3]
 
 geigen <- eigen_centrality(gc, scale = TRUE)$vector
 
@@ -163,6 +178,9 @@ plot(gc,
      vertex.label.cex = 0.3, 
      vertex.color = delinqColor, 
      main = 'Eigenvector')
+
+print('Best 3 Eigenvector: ')
+sort(geigen, decreasing = TRUE, index.return = TRUE)$x[1:3]
 
 centr_degree(gc, loops = FALSE, mode = 'in')$centralization
 centr_degree(gc, loops = FALSE, mode = 'out')$centralization
