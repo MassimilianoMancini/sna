@@ -10,7 +10,7 @@ diag(Y) <- NA
 
 n <-nrow(Y)
 
-degreeIn <- 
+degreeIn <- degree(advice, mode = 'in')
 degreeOut <- degree(advice, mode = 'out')
 rec <- reciprocity(advice)
 

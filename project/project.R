@@ -105,7 +105,7 @@ outDegree <- degree(g, normalized = TRUE, mode = 'out')
 set.seed(6)
 png(filename = 'indegree.png', width = 1024, height = 1024)
 plot(g, 
-     vertex.size = inDegree*70, 
+     vertex.size = inDegree*20, 
      vertex.color = delinqColor, 
      main = 'In Degree')
 dev.off()
@@ -114,7 +114,7 @@ dev.off()
 set.seed(6)
 png(filename = 'outdegree.png', width = 1024, height = 1024)
 plot(g, 
-     vertex.size = outDegree*70, 
+     vertex.size = outDegree*20, 
      vertex.color = delinqColor, 
      main = 'Out Degree')
 dev.off()
@@ -134,7 +134,7 @@ outCloseness <- closeness(gc, normalized = TRUE, mode = 'out')
 set.seed(6)
 png(filename = 'incloseness.png', width = 1024, height = 1024)
 plot(gc, 
-     vertex.size = inCloseness*40, 
+     vertex.size = inCloseness*20, 
      vertex.color = delinqColor, 
      main = 'Closeness In')
 dev.off()
@@ -142,7 +142,7 @@ dev.off()
 set.seed(6)
 png(filename = 'outcloseness.png', width = 1024, height = 1024)
 plot(gc, 
-     vertex.size = outCloseness*40, 
+     vertex.size = outCloseness*20, 
      vertex.color = delinqColor, 
      main = 'Closeness Out')
 dev.off()
@@ -160,7 +160,7 @@ betw <- betweenness(gc, normalized = TRUE)
 set.seed(6)
 png(filename = 'betweenness.png', width = 1024, height = 1024)
 plot(gc, 
-     vertex.size = betw*70, 
+     vertex.size = betw*20, 
      vertex.color = delinqColor, 
      main = 'Betweenness')
 dev.off()

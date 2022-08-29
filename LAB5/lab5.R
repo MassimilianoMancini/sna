@@ -66,7 +66,7 @@ p0
 
 
 # Experiment: is the observed network coherent with a BRG model G(n, 0.42)?
-load('LAB 5/lab5.Rdata')
+load('lab5.Rdata')
 Y <- get.adjacency(advice, sparse = FALSE)
 diag(Y) <- NA
 n <- nrow(Y)
