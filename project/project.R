@@ -15,6 +15,16 @@ V(g)$gender <- attrs$V1
 V(g)$delinq <- attrs$V2
 V(g)$friend <- attrs$V3
 
+net = network(Y, directed = T)
+
+# add network and edge attributes
+net %v% "gender" <- attrs$V1
+net %v% "delinq" <- attrs$V2
+net %v% "friend" <- attrs$V3
+
+# let us give a look at the properties
+net
+
 rho <- graph.density(g)
 oddsRho <- rho/(1-rho)
 
@@ -190,4 +200,112 @@ centr_clo(gc, mode = 'out')$centralization
 centr_betw(gc)$centralization
 
 centr_eigen(gc)$centralization
+
+
+
+
+
+brg <- ergm(net ~ edges)
+summary(brg)
+
+plogis(brg$coefficients)
+
+mod2 = ergm(net ~ edges + sender + receiver + mutual, 
+            control = control.ergm(seed = 2))
+
+mod3 = ergm(net ~ edges + receiver + mutual, control = control.ergm(seed = 1))
+summary(mod3)
+mcmc.diagnostics(mod3)
+AIC(brg, mod3)
+
+
+mod4 = ergm(net ~ edges + mutual)
+summary(mod4)
+
+mod5 = ergm(net ~ 
+              edges 
+              + mutual 
+              + nodecov("delinq") 
+              + nodecov("friend") 
+              + nodefactor("gender") 
+              + absdiff("delinq")
+              + absdiff("friend")
+              + nodematch("gender"), 
+              control = control.ergm(seed = 1)) 
+summary(mod5)
+
+mod6 = ergm(net ~ 
+              edges
+            + mutual 
+            + nodecov("delinq") 
+            + absdiff("delinq")
+            + nodematch("gender"),
+            control = control.ergm(seed = 1)) 
+summary(mod6)
+mcmc.diagnostics(mod6)
+
+mod7 = ergm(net ~ 
+              edges
+            + mutual 
+            + nodecov("delinq") 
+            + absdiff("delinq")
+            + nodematch("gender")
+            + gwodegree(decay = 1, fixed = TRUE),
+            control = control.ergm(seed = 0)) 
+summary(mod7)
+mcmc.diagnostics(mod7)
+
+mod8 = ergm(net ~ 
+              edges
+            + nodecov("delinq") 
+            + absdiff("delinq")
+            + nodematch("gender")
+            + gwidegree(decay = 1, fixed = TRUE)
+            + gwodegree(decay = 1, fixed = TRUE),
+            control = control.ergm(seed = 0)) 
+summary(mod8)
+mcmc.diagnostics(mod8)
+
+mod9 = ergm(net ~ 
+              edges
+            + mutual 
+            + nodecov("delinq") 
+            + absdiff("delinq")
+            + gwodegree(decay = 1, fixed = TRUE),
+            control = control.ergm(seed = 0)) 
+summary(mod9)
+mcmc.diagnostics(mod9)
+
+
+mod10 = ergm(net ~ 
+              edges
+            + mutual 
+            + nodecov("delinq") 
+            + absdiff("delinq")
+            + nodematch("gender")
+            + gwdsp(decay = 1)
+            + gwodegree(decay = 1, fixed = TRUE),
+            control = control.ergm(seed = 1)) 
+summary(mod10)
+mcmc.diagnostics(mod10)
+
+
+sdSim = c()
+meanSim = c()
+tranSim = c()
+
+for (b in 1:1000) {
+  ig <- asIgraph(simulate(brg, burnin = 1000, nsim = 1, verbose = TRUE))
+  sdSim[b] <- sd(degree(ig))
+  meanSim[b] <- mean(degree(ig))
+  tranSim[b] <- transitivity(ig)
+}
+
+par(mfrow = c(1,3))
+hist(sdSim, main = 'sd Degree')
+abline(v = sd(degree(g)), col = 'red', lty = 2, lwd = 2)
+hist(meanSim, main = 'mean Degree')
+abline(v = mean(degree(g)), col = 'red', lty = 2, lwd = 2)
+hist(tranSim, main = 'transitivity', xlim = c(0, 0.5))
+abline(v = transitivity(g), col = 'red', lty = 2, lwd = 2)
 

@@ -227,9 +227,10 @@ hist(sdDeg.sim, main = "sd Degree")
 abline(v = sd(degree(floM)), col = "red", lty = 2, lwd = 2)
 
 hist(meanDeg.sim, main = "mean Degree")
-abline(v = mean(degree(floM)), col = "red", lty = 2, lwd = 2)
+abline(v = mean(degree(flomarriage)), col = "red", lty = 2, lwd = 2)
 
 hist(tr.sim, main = "Transitivity")
-abline(v = transitivity(floM), col = "red", lty = 2, lwd = 2)
+abline(v = transitivity(flomarriage), col = "red", lty = 2, lwd = 2)
 
 # The model seems appropriate to describe all these three features of the network.
+
