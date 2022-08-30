@@ -3,6 +3,9 @@
 rm(list = ls())
 
 library(igraph)
+library(ergm)
+library(network)
+library(intergraph)
 
 setwd("~/unifi/sna/project")
 
@@ -15,7 +18,7 @@ V(g)$gender <- attrs$V1
 V(g)$delinq <- attrs$V2
 V(g)$friend <- attrs$V3
 
-net = network(Y, directed = T)
+net <- network(Y, directed = T)
 
 # add network and edge attributes
 net %v% "gender" <- attrs$V1
@@ -137,6 +140,7 @@ sort(outDegree, decreasing = TRUE, index.return = TRUE)$x[1:3]
 
 comps <- components(g, mode = 'strong')
 gc <- subgraph(g, V(g)[comps$membership == which.max(comps$csize)])
+gcnet <- asNetwork(gc)
 
 inCloseness <- closeness(gc, normalized = TRUE, mode = 'in')
 outCloseness <- closeness(gc, normalized = TRUE, mode = 'out')
@@ -255,13 +259,12 @@ mod7 = ergm(net ~
 summary(mod7)
 mcmc.diagnostics(mod7)
 
-mod8 = ergm(net ~ 
+mod8 = ergm(gcnet ~ 
               edges
+            + mutual
             + nodecov("delinq") 
             + absdiff("delinq")
-            + nodematch("gender")
-            + gwidegree(decay = 1, fixed = TRUE)
-            + gwodegree(decay = 1, fixed = TRUE),
+            + nodematch("gender"),
             control = control.ergm(seed = 0)) 
 summary(mod8)
 mcmc.diagnostics(mod8)
@@ -277,7 +280,7 @@ summary(mod9)
 mcmc.diagnostics(mod9)
 
 
-mod10 = ergm(net ~ 
+mod10 = ergm(gcnet ~ 
               edges
             + mutual 
             + nodecov("delinq") 
@@ -294,8 +297,8 @@ sdSim = c()
 meanSim = c()
 tranSim = c()
 
-for (b in 1:1000) {
-  ig <- asIgraph(simulate(brg, burnin = 1000, nsim = 1, verbose = TRUE))
+for (b in 1:100) {
+  ig <- asIgraph(simulate(mod7, burnin = 1000, nsim = 1, verbose = TRUE))
   sdSim[b] <- sd(degree(ig))
   meanSim[b] <- mean(degree(ig))
   tranSim[b] <- transitivity(ig)
