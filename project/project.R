@@ -4,6 +4,7 @@ rm(list = ls())
 
 library(igraph)
 library(ergm)
+library(network)
 library(intergraph)
 
 setwd("~/unifi/sna/project")
@@ -17,7 +18,7 @@ V(g)$gender <- attrs$V1
 V(g)$delinq <- attrs$V2
 V(g)$friend <- attrs$V3
 
-net = network(Y, directed = T)
+net <- network(Y, directed = T)
 
 # add network and edge attributes
 net %v% "gender" <- attrs$V1
@@ -139,6 +140,7 @@ sort(outDegree, decreasing = TRUE, index.return = TRUE)$x[1:3]
 
 comps <- components(g, mode = 'strong')
 gc <- subgraph(g, V(g)[comps$membership == which.max(comps$csize)])
+gcnet <- asNetwork(gc)
 
 inCloseness <- closeness(gc, normalized = TRUE, mode = 'in')
 outCloseness <- closeness(gc, normalized = TRUE, mode = 'out')
@@ -338,8 +340,6 @@ m6 <- ergm(net ~
            + gwdsp(decay = 1, fixed = TRUE),
            control = control.ergm(seed = 0))
 
-mcmc.diagnostics(m6)
-
 AIC(m0, m1, m2, m3, m4, m5, m6)
 BIC(m0, m1, m2, m3, m4, m5, m6)
 
@@ -348,7 +348,7 @@ meanSim = c()
 tranSim = c()
 
 for (b in 1:100) {
-  ig <- asIgraph(simulate(m0, burnin = 1000, nsim = 1, verbose = TRUE))
+  ig <- asIgraph(simulate(m6, burnin = 1000, nsim = 1, verbose = TRUE))
   sdSim[b] <- sd(degree(ig))
   meanSim[b] <- mean(degree(ig))
   tranSim[b] <- transitivity(ig)
