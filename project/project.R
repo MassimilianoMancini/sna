@@ -4,7 +4,7 @@ rm(list = ls())
 
 library(igraph)
 library(ergm)
-library(network)
+#library(network)
 library(intergraph)
 
 # be sure to have the correct working directory
@@ -227,7 +227,7 @@ m1 <- ergm(net ~
               + receiver, 
               control = control.ergm(seed = 0))
 
-# dyad independent model
+# dyad independent model, some nodes have -Inf value
 m2Fail <- ergm(net ~ 
                    edges 
                  + sender 
@@ -351,8 +351,11 @@ png(filename = 'diagnostic-m6.png', width = 1024, height = 1024)
 mcmc.diagnostics(m6)
 dev.off()
 
-AIC(m0, m1, m2, m3, m4, m5, m6)
-BIC(m0, m1, m2, m3, m4, m5, m6)
+aic <- AIC(m0, m1, m2, m3, m4, m5, m6)
+bic <- BIC(m0, m1, m2, m3, m4, m5, m6)
+data.frame(aic, bic$BIC )
+
+
 
 meanDegreeSim <- c()
 sdInDegreeSim <- c()
