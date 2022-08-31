@@ -340,25 +340,39 @@ m6 <- ergm(net ~
            + gwdsp(decay = 1, fixed = TRUE),
            control = control.ergm(seed = 0))
 
+png(filename = 'diagnostic-m6.png', width = 1024, height = 1024)
+mcmc.diagnostics(m6)
+dev.off()
+
 AIC(m0, m1, m2, m3, m4, m5, m6)
 BIC(m0, m1, m2, m3, m4, m5, m6)
 
-sdSim = c()
-meanSim = c()
-tranSim = c()
+sdSim <- c()
+meanSim <- c()
+recipSim <- c()
+tranSim <- c()
 
-for (b in 1:100) {
+for (b in 1:1000) {
   ig <- asIgraph(simulate(m6, burnin = 1000, nsim = 1, verbose = TRUE))
   sdSim[b] <- sd(degree(ig))
   meanSim[b] <- mean(degree(ig))
+  recipSim[b] <- reciprocity(ig)
   tranSim[b] <- transitivity(ig)
 }
 
-par(mfrow = c(1,3))
+png(filename = 'results.png', width = 1024, height = 1024)
+par(mfrow = c(1,4))
 hist(sdSim, main = 'sd Degree')
 abline(v = sd(degree(g)), col = 'red', lty = 2, lwd = 2)
 hist(meanSim, main = 'mean Degree')
 abline(v = mean(degree(g)), col = 'red', lty = 2, lwd = 2)
+hist(recipSim, main = 'reciprocity')
+abline(v = reciprocity(g), col = 'red', lty = 2, lwd = 2)
 hist(tranSim, main = 'transitivity', xlim = c(0, 0.5))
 abline(v = transitivity(g), col = 'red', lty = 2, lwd = 2)
+dev.off()
 
+mean(sdSim < sd(degree(g)))
+mean(meanSim > mean(degree(g)))
+mean(recipSim < reciprocity(g))
+mean(tranSim < transitivity(g))
