@@ -2,7 +2,7 @@ rm(list = ls())
 
 library(igraph)
 
-load('LAB6/lab6.Rdata')
+load('lab6.Rdata')
 
 # advice network
 Y <- get.adjacency(advice, sparse = FALSE)
@@ -167,8 +167,8 @@ diag(Y) <- NA
 
 n <-nrow(Y)
 
-degreeIn <- 
-  degreeOut <- degree(friend, mode = 'out')
+degreeIn <- degree(friend, mode = 'in')
+degreeOut <- degree(friend, mode = 'out')
 rec <- reciprocity(friend)
 
 # best case scenario

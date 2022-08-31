@@ -3,6 +3,8 @@
 rm(list = ls())
 
 library(igraph)
+library(ergm)
+library(intergraph)
 
 setwd("~/unifi/sna/project")
 
@@ -204,98 +206,149 @@ centr_eigen(gc)$centralization
 
 
 
+# Homogeneous simple random graph model in ERGM flavor
+m0 <- ergm(net ~ 
+              edges, 
+              control = control.ergm(seed = 0))
 
-brg <- ergm(net ~ edges)
-summary(brg)
-
-plogis(brg$coefficients)
-
-mod2 = ergm(net ~ edges + sender + receiver + mutual, 
-            control = control.ergm(seed = 2))
-
-mod3 = ergm(net ~ edges + receiver + mutual, control = control.ergm(seed = 1))
-summary(mod3)
-mcmc.diagnostics(mod3)
-AIC(brg, mod3)
-
-
-mod4 = ergm(net ~ edges + mutual)
-summary(mod4)
-
-mod5 = ergm(net ~ 
+# Non-homogeneous simple random graph model in ERGM flavor
+m1 <- ergm(net ~ 
               edges 
-              + mutual 
+              + sender 
+              + receiver, 
+              control = control.ergm(seed = 0))
+
+# dyad independent model
+m2Fail <- ergm(net ~ 
+                   edges 
+                 + sender 
+                 + receiver
+                 + mutual,
+                 control = control.ergm(seed = 0))
+
+# dyad independent model
+m2NoAicBic <- ergm(net ~ 
+               edges 
+               + receiver
+               + mutual,
+               control = control.ergm(seed = 0))
+
+# dyad independent model
+m2 <- ergm(net ~ 
+              edges 
+              + mutual,
+              control = control.ergm(seed = 0))
+
+# dyad independent model with nodal attributes (too many)
+m3TooManyAttrs <- ergm(net ~ 
+                        edges 
+                        + mutual 
+                        + nodecov("delinq") 
+                        + nodecov("friend") 
+                        + nodefactor("gender") 
+                        + absdiff("delinq")
+                        + absdiff("friend")
+                        + nodematch("gender"), 
+                        control = control.ergm(seed = 0)) 
+
+# dyad independent model with nodal attributes
+m3 <- ergm(net ~ 
+              edges 
+            + mutual 
+            + nodecov("delinq") 
+            + absdiff("delinq")
+            + nodematch("gender"), 
+            control = control.ergm(seed = 0))
+
+# markov model
+m4Fail <- ergm(net ~ 
+                edges
+                + istar(2)
+                + ostar(2)
+                + triangle,
+                control = control.ergm(seed = 0))
+
+
+# markov model without triangle
+m4StillFail <- ergm(net ~ 
+                      edges
+                      + istar(2)
+                      + ostar(2),
+                      control = control.ergm(seed = 0))
+
+# markov model without triangle alternating k-star terms
+m4TooSimple <- ergm(net ~ 
+                     edges
+                   + gwidegree(decay = 1, fixed = TRUE)
+                   + gwodegree(decay = 1, fixed = TRUE),
+                   control = control.ergm(seed = 0))
+
+# markov model without triangle alternating k-star terms with nodal attributes
+m4TooManyParams <- ergm(net ~ 
+                     edges
+                   + mutual
+                   + nodecov("delinq") 
+                   + absdiff("delinq")
+                   + nodematch("gender")
+                   + gwidegree(decay = 1, fixed = TRUE)
+                   + gwodegree(decay = 1, fixed = TRUE),
+                   control = control.ergm(seed = 0))
+
+# markov model without triangle alternating k-star terms
+m4 <- ergm(net ~ 
+               edges
+             + mutual
+             + nodecov("delinq") 
+             + absdiff("delinq")
+             + nodematch("gender")
+             + gwodegree(decay = 1, fixed = TRUE),
+             control = control.ergm(seed = 0))
+
+# Social circuit model with alternating k-triangles and k-2 paths
+m5Fail <- ergm(net ~ 
+                edges
+              + gwesp(decay = 1, fixed = TRUE) 
+              + gwdsp(decay = 1, fixed = TRUE),
+              control = control.ergm(seed = 0))
+
+# Social circuit model with alternating k-triangles
+m5StillFail <- ergm(net ~ 
+                 edges
+               + gwesp(decay = 1, fixed = TRUE),
+               control = control.ergm(seed = 0))
+
+# Social circuit model with alternating k-2 paths
+m5 <- ergm(net ~ 
+                edges
+              + mutual
               + nodecov("delinq") 
-              + nodecov("friend") 
-              + nodefactor("gender") 
               + absdiff("delinq")
-              + absdiff("friend")
-              + nodematch("gender"), 
-              control = control.ergm(seed = 1)) 
-summary(mod5)
+              + nodematch("gender")
+              + gwodegree(decay = 1, fixed = TRUE)
+              + gwdsp(decay = 1, fixed = TRUE),
+              control = control.ergm(seed = 0))
 
-mod6 = ergm(net ~ 
-              edges
-            + mutual 
-            + nodecov("delinq") 
-            + absdiff("delinq")
-            + nodematch("gender"),
-            control = control.ergm(seed = 1)) 
-summary(mod6)
-mcmc.diagnostics(mod6)
+# Social circuit model with alternating k-2 paths remove gender
+m6 <- ergm(net ~ 
+             edges
+           + mutual
+           + nodecov("delinq") 
+           + absdiff("delinq")
+           + gwodegree(decay = 1, fixed = TRUE)
+           + gwdsp(decay = 1, fixed = TRUE),
+           control = control.ergm(seed = 0))
 
-mod7 = ergm(net ~ 
-              edges
-            + mutual 
-            + nodecov("delinq") 
-            + absdiff("delinq")
-            + nodematch("gender")
-            + gwodegree(decay = 1, fixed = TRUE),
-            control = control.ergm(seed = 0)) 
-summary(mod7)
-mcmc.diagnostics(mod7)
+mcmc.diagnostics(m6)
 
-mod8 = ergm(net ~ 
-              edges
-            + nodecov("delinq") 
-            + absdiff("delinq")
-            + nodematch("gender")
-            + gwidegree(decay = 1, fixed = TRUE)
-            + gwodegree(decay = 1, fixed = TRUE),
-            control = control.ergm(seed = 0)) 
-summary(mod8)
-mcmc.diagnostics(mod8)
-
-mod9 = ergm(net ~ 
-              edges
-            + mutual 
-            + nodecov("delinq") 
-            + absdiff("delinq")
-            + gwodegree(decay = 1, fixed = TRUE),
-            control = control.ergm(seed = 0)) 
-summary(mod9)
-mcmc.diagnostics(mod9)
-
-
-mod10 = ergm(net ~ 
-              edges
-            + mutual 
-            + nodecov("delinq") 
-            + absdiff("delinq")
-            + nodematch("gender")
-            + gwdsp(decay = 1)
-            + gwodegree(decay = 1, fixed = TRUE),
-            control = control.ergm(seed = 1)) 
-summary(mod10)
-mcmc.diagnostics(mod10)
-
+AIC(m0, m1, m2, m3, m4, m5, m6)
+BIC(m0, m1, m2, m3, m4, m5, m6)
 
 sdSim = c()
 meanSim = c()
 tranSim = c()
 
-for (b in 1:1000) {
-  ig <- asIgraph(simulate(brg, burnin = 1000, nsim = 1, verbose = TRUE))
+for (b in 1:100) {
+  ig <- asIgraph(simulate(m0, burnin = 1000, nsim = 1, verbose = TRUE))
   sdSim[b] <- sd(degree(ig))
   meanSim[b] <- mean(degree(ig))
   tranSim[b] <- transitivity(ig)
