@@ -4,7 +4,6 @@ rm(list = ls())
 
 library(igraph)
 library(ergm)
-#library(network)
 library(intergraph)
 
 # be sure to have the correct working directory
@@ -32,6 +31,9 @@ cat('Density odds: ', oddsRho)
 
 # Type and number of dyads
 dyad.census(g)
+
+# Numner of triangles
+sum(count_triangles(g))
 
 # Recioprocity
 rec <- reciprocity(g)
