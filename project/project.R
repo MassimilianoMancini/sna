@@ -229,7 +229,7 @@ m1 <- ergm(net ~
               + receiver, 
               control = control.ergm(seed = 0))
 
-# dyad independent model, some nodes have -Inf value
+# p1 model, some nodes have -Inf value
 m2Fail <- ergm(net ~ 
                    edges 
                  + sender 
@@ -237,20 +237,20 @@ m2Fail <- ergm(net ~
                  + mutual,
                  control = control.ergm(seed = 0))
 
-# dyad independent model
+# p1 model
 m2NoAicBic <- ergm(net ~ 
                edges 
                + receiver
                + mutual,
                control = control.ergm(seed = 0))
 
-# dyad independent model
+# p1 model
 m2 <- ergm(net ~ 
               edges 
               + mutual,
               control = control.ergm(seed = 0))
 
-# dyad independent model with nodal attributes (too many)
+# p1 model with nodal attributes (too many)
 m3TooManyAttrs <- ergm(net ~ 
                         edges 
                         + mutual 
@@ -262,7 +262,7 @@ m3TooManyAttrs <- ergm(net ~
                         + nodematch("gender"), 
                         control = control.ergm(seed = 0)) 
 
-# dyad independent model with nodal attributes
+# p1 model with nodal attributes
 m3 <- ergm(net ~ 
               edges 
             + mutual 
