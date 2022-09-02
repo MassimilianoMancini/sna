@@ -1,4 +1,6 @@
-# Project by Massimiliano Mancini
+# Social Network Analisys
+# Network descriptive data, properties, modeling
+# author Massimiliano Mancini
 
 rm(list = ls())
 
@@ -6,7 +8,7 @@ library(igraph)
 library(ergm)
 library(intergraph)
 
-# be sure to have the correct working directory
+# Please, be sure to set the correct working directory
 Y <- as.matrix(read.table('HN34_10.DAT'))
 attrs <- read.table('CBE10.DAT')
 
@@ -32,10 +34,10 @@ cat('Density odds: ', oddsRho)
 # Type and number of dyads
 dyad.census(g)
 
-# Numner of triangles
+# Numbner of triangles
 sum(count_triangles(g))
 
-# Recioprocity
+# Reciprocity
 rec <- reciprocity(g)
 oddsRec <- rec/(1-rec)
 
@@ -72,31 +74,24 @@ cat('Transitivity: ', tran)
 cat('Transitivity odds: ', oddsTran)
 cat('Standardized transitivity: ', standardizeTrans)
 
-# Plot graph and save it to file
+# Plot graphs and save it to file
 fine = 500
 
-# Gender colors
+
+# Gender graph
 genderColor <- ifelse(V(g)$gender == 1, 'pink', 'lightblue')
-
-# Delinq color
-pal = colorRampPalette(c('white','red'))
-delinqColor = pal(fine)[as.numeric(cut(V(g)$delinq,breaks = fine))]
-
-# Friend color 
-pal = colorRampPalette(c('blue','white'))
-friendColor = pal(fine)[as.numeric(cut(V(g)$friend,breaks = fine))]
-
-set.seed(6)
 png(filename = 'gender.png', width = 1024, height = 1024)
-
+set.seed(6)
 plot(g, 
      vertex.size = 10, 
      vertex.color = genderColor, 
      main = 'Gender')
 dev.off()
 
+# Delinquent tendency graph
+pald = colorRampPalette(c('white','red'))
+delinqColor = pald(fine)[as.numeric(cut(V(g)$delinq,breaks = fine))]
 png(filename = 'dt.png', width = 1024, height = 1024)
-
 set.seed(6)
 plot(g, 
      vertex.size = 10, 
@@ -104,6 +99,9 @@ plot(g,
      main = 'Delinquent tendency')
 dev.off()
 
+# Friendship importance graph
+palf = colorRampPalette(c('blue','white'))
+friendColor = palf(fine)[as.numeric(cut(V(g)$friend,breaks = fine))]
 set.seed(6)
 png(filename = 'fi.png', width = 1024, height = 1024)
 plot(g, 
@@ -122,8 +120,9 @@ assortativity(g, V(g)$friend)
 inDegree <- degree(g, normalized = TRUE, mode = 'in')
 outDegree <- degree(g, normalized = TRUE, mode = 'out')
 
-set.seed(6)
+
 png(filename = 'indegree.png', width = 1024, height = 1024)
+set.seed(6)
 plot(g, 
      vertex.size = inDegree*20, 
      vertex.color = delinqColor, 
@@ -131,8 +130,8 @@ plot(g,
 dev.off()
 
 
-set.seed(6)
 png(filename = 'outdegree.png', width = 1024, height = 1024)
+set.seed(6)
 plot(g, 
      vertex.size = outDegree*20, 
      vertex.color = delinqColor, 
@@ -154,16 +153,17 @@ gcnet <- asNetwork(gc)
 inCloseness <- closeness(gc, normalized = TRUE, mode = 'in')
 outCloseness <- closeness(gc, normalized = TRUE, mode = 'out')
 
-set.seed(6)
+
 png(filename = 'incloseness.png', width = 1024, height = 1024)
+set.seed(6)
 plot(gc, 
      vertex.size = inCloseness*20, 
      vertex.color = delinqColor, 
      main = 'Closeness In')
 dev.off()
 
-set.seed(6)
 png(filename = 'outcloseness.png', width = 1024, height = 1024)
+set.seed(6)
 plot(gc, 
      vertex.size = outCloseness*20, 
      vertex.color = delinqColor, 
@@ -179,8 +179,8 @@ sort(outCloseness, decreasing = TRUE, index.return = TRUE)$x[1:3]
 # Betweeness centrality
 betw <- betweenness(gc, normalized = TRUE)
 
-set.seed(6)
 png(filename = 'betweenness.png', width = 1024, height = 1024)
+set.seed(6)
 plot(gc, 
      vertex.size = betw*20, 
      vertex.color = delinqColor, 
@@ -194,8 +194,9 @@ sort(betw, decreasing = TRUE, index.return = TRUE)$x[1:3]
 # Eigenvector centrality 
 eigen <- eigen_centrality(gc, scale = TRUE)$vector
 
-set.seed(6)
+
 png(filename = 'eigen.png', width = 1024, height = 1024)
+set.seed(6)
 plot(gc, 
      vertex.size = eigen*20, 
      vertex.color = delinqColor, 
@@ -225,34 +226,34 @@ m0 <- ergm(net ~
 # Non-homogeneous simple random graph model in ERGM flavor
 m1 <- ergm(net ~ 
               edges 
-              + sender 
-              + receiver, 
+            + sender 
+            + receiver, 
               control = control.ergm(seed = 0))
 
 # p1 model, some nodes have -Inf value
 m2Fail <- ergm(net ~ 
-                   edges 
-                 + sender 
-                 + receiver
-                 + mutual,
-                 control = control.ergm(seed = 0))
+                  edges 
+                + sender 
+                + receiver
+                + mutual,
+                  control = control.ergm(seed = 0))
 
 # p1 model
 m2NoAicBic <- ergm(net ~ 
-               edges 
-               + receiver
-               + mutual,
-               control = control.ergm(seed = 0))
+                      edges 
+                      + receiver
+                      + mutual,
+                      control = control.ergm(seed = 0))
 
 # p1 model
 m2 <- ergm(net ~ 
               edges 
-              + mutual,
+            + mutual,
               control = control.ergm(seed = 0))
 
 # p1 model with nodal attributes (too many)
 m3TooManyAttrs <- ergm(net ~ 
-                        edges 
+                          edges 
                         + mutual 
                         + nodecov("delinq") 
                         + nodecov("friend") 
@@ -260,7 +261,7 @@ m3TooManyAttrs <- ergm(net ~
                         + absdiff("delinq")
                         + absdiff("friend")
                         + nodematch("gender"), 
-                        control = control.ergm(seed = 0)) 
+                          control = control.ergm(seed = 0)) 
 
 # p1 model with nodal attributes
 m3 <- ergm(net ~ 
@@ -269,96 +270,96 @@ m3 <- ergm(net ~
             + nodecov("delinq") 
             + absdiff("delinq")
             + nodematch("gender"), 
-            control = control.ergm(seed = 0))
+              control = control.ergm(seed = 0))
 
 # markov model
 m4Fail <- ergm(net ~ 
-                edges
+                  edges
                 + istar(2)
                 + ostar(2)
                 + triangle,
-                control = control.ergm(seed = 0))
-
+                  control = control.ergm(seed = 0))
 
 # markov model without triangle
 m4StillFail <- ergm(net ~ 
-                      edges
-                      + istar(2)
-                      + ostar(2),
-                      control = control.ergm(seed = 0))
+                       edges
+                     + istar(2)
+                     + ostar(2),
+                       control = control.ergm(seed = 0))
 
 # markov model without triangle alternating k-star terms
 m4TooSimple <- ergm(net ~ 
-                     edges
-                   + gwidegree(decay = 1, fixed = TRUE)
-                   + gwodegree(decay = 1, fixed = TRUE),
-                   control = control.ergm(seed = 0))
+                       edges
+                     + gwidegree(decay = 1, fixed = TRUE)
+                     + gwodegree(decay = 1, fixed = TRUE),
+                       control = control.ergm(seed = 0))
 
 # markov model without triangle alternating k-star terms with nodal attributes
 m4TooManyParams <- ergm(net ~ 
-                     edges
-                   + mutual
-                   + nodecov("delinq") 
-                   + absdiff("delinq")
-                   + nodematch("gender")
-                   + gwidegree(decay = 1, fixed = TRUE)
-                   + gwodegree(decay = 1, fixed = TRUE),
-                   control = control.ergm(seed = 0))
+                           edges
+                         + mutual
+                         + nodecov("delinq") 
+                         + absdiff("delinq")
+                         + nodematch("gender")
+                         + gwidegree(decay = 1, fixed = TRUE)
+                         + gwodegree(decay = 1, fixed = TRUE),
+                           control = control.ergm(seed = 0))
 
 # markov model without triangle alternating k-star terms
 m4 <- ergm(net ~ 
-               edges
-             + mutual
-             + nodecov("delinq") 
-             + absdiff("delinq")
-             + nodematch("gender")
-             + gwodegree(decay = 1, fixed = TRUE),
-             control = control.ergm(seed = 0))
+              edges
+            + mutual
+            + nodecov("delinq") 
+            + absdiff("delinq")
+            + nodematch("gender")
+            + gwodegree(decay = 1, fixed = TRUE),
+              control = control.ergm(seed = 0))
 
 # Social circuit model with alternating k-triangles and k-2 paths
 m5Fail <- ergm(net ~ 
-                edges
-              + gwesp(decay = 1, fixed = TRUE) 
-              + gwdsp(decay = 1, fixed = TRUE),
-              control = control.ergm(seed = 0))
+                  edges
+                + gwesp(decay = 1, fixed = TRUE) 
+                + gwdsp(decay = 1, fixed = TRUE),
+                  control = control.ergm(seed = 0))
 
 # Social circuit model with alternating k-triangles
 m5StillFail <- ergm(net ~ 
-                 edges
-               + gwesp(decay = 1, fixed = TRUE),
-               control = control.ergm(seed = 0))
+                       edges
+                     + gwesp(decay = 1, fixed = TRUE),
+                       control = control.ergm(seed = 0))
 
 # Social circuit model with alternating k-2 paths
 m5 <- ergm(net ~ 
-                edges
-              + mutual
-              + nodecov("delinq") 
-              + absdiff("delinq")
-              + nodematch("gender")
-              + gwodegree(decay = 1, fixed = TRUE)
-              + gwdsp(decay = 1, fixed = TRUE),
+              edges
+            + mutual
+            + nodecov("delinq") 
+            + absdiff("delinq")
+            + nodematch("gender")
+            + gwodegree(decay = 1, fixed = TRUE)
+            + gwdsp(decay = 1, fixed = TRUE),
               control = control.ergm(seed = 0))
 
 # Social circuit model with alternating k-2 paths remove gender
 m6 <- ergm(net ~ 
-             edges
-           + mutual
-           + nodecov("delinq") 
-           + absdiff("delinq")
-           + gwodegree(decay = 1, fixed = TRUE)
-           + gwdsp(decay = 1, fixed = TRUE),
-           control = control.ergm(seed = 0))
+              edges
+            + mutual
+            + nodecov("delinq") 
+            + absdiff("delinq")
+            + gwodegree(decay = 1, fixed = TRUE)
+            + gwdsp(decay = 1, fixed = TRUE),
+              control = control.ergm(seed = 0))
 
+# AIC and BIC models comparison
+aic <- AIC(m0, m1, m2, m3, m4, m5, m6)
+bic <- BIC(m0, m1, m2, m3, m4, m5, m6)
+data.frame(aic, 'BIC' = bic$BIC)
+
+# Diagnostic on m6
 png(filename = 'diagnostic-m6.png', width = 1024, height = 1024)
 mcmc.diagnostics(m6)
 dev.off()
 
-aic <- AIC(m0, m1, m2, m3, m4, m5, m6)
-bic <- BIC(m0, m1, m2, m3, m4, m5, m6)
-data.frame(aic, bic$BIC )
-
-
-
+# Simulation on m6
 meanDegreeSim <- c()
 sdInDegreeSim <- c()
 sdOutDegreeSim <- c()
@@ -374,7 +375,7 @@ for (b in 1:1000) {
   tranSim[b] <- transitivity(simg)
 }
 
-
+# Mean
 meanReal <- mean(degree(g))
 sdIn <- sd(degree(g, mode = 'in'))
 sdOut <- sd(degree(g, mode = 'out'))
@@ -384,6 +385,7 @@ hist(meanDegreeSim, main = 'mean Degree')
 abline(v = meanReal, col = 'red', lty = 2, lwd = 2)
 dev.off()
 
+# Standard deviation
 png(filename = 'sdInDegreeSim.png', width = 1024, height = 1024)
 hist(sdInDegreeSim, main = 'sd InDegree')
 abline(v = sdIn, col = 'red', lty = 2, lwd = 2)
@@ -394,21 +396,24 @@ hist(sdOutDegreeSim, main = 'sd OutDegree')
 abline(v = sdOut, col = 'red', lty = 2, lwd = 2)
 dev.off()
 
+# Reciprocity
 png(filename = 'recipSim.png', width = 1024, height = 1024)
 hist(recipSim, main = 'Reciprocity')
 abline(v = rec, col = 'red', lty = 2, lwd = 2)
 dev.off()
 
+# Transitivity
 png(filename = 'tranSim.png', width = 1024, height = 1024)
 hist(tranSim, main = 'Transitivity', xlim = c(0,0.5))
 abline(v = tran, col = 'red', lty = 2, lwd = 2)
 dev.off()
 
-t.test(meanDegreeSim, mu = meanReal)
-t.test(sdInDegreeSim, mu = sdIn)
-t.test(sdOutDegreeSim, mu = sdOut)
-t.test(recipSim, mu = rec)
-t.test(tranSim, mu = tran)
+# Some simple assessments, from 0 to 1, the closer to 0.5 the better
+mean(meanDegreeSim < meanReal)
+mean(sdInDegreeSim < sdIn)
+mean(sdOutDegreeSim < sdOut)
+mean (recipSim < rec)
+mean (tranSim < tran)
 
 
 
