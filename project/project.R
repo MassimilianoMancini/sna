@@ -26,10 +26,8 @@ net <- asNetwork(g)
 
 # Density
 rho <- graph.density(g)
-oddsRho <- rho/(1-rho)
 
 cat('Density: ', rho)
-cat('Density odds: ', oddsRho)
 
 # Type and number of dyads
 dyad.census(g)
@@ -39,10 +37,8 @@ sum(count_triangles(g))
 
 # Reciprocity
 rec <- reciprocity(g)
-oddsRec <- rec/(1-rec)
 
 cat('Reciprocity: ', rec)
-cat ('Reciprocity odds: ', oddsRec)
 
 # Type and number of triads
 censusLabels = c('empty',
@@ -66,13 +62,8 @@ data.frame(censusLabels, triad.census(g))
 
 # Transitivity
 tran <- transitivity(g, type = 'global')
-oddsTran <- tran/(1-tran)
-
-standardizeTrans <- log(oddsTran) - log(oddsRho) 
 
 cat('Transitivity: ', tran)
-cat('Transitivity odds: ', oddsTran)
-cat('Standardized transitivity: ', standardizeTrans)
 
 # Plot graphs and save it to file
 fine = 500
