@@ -62,12 +62,10 @@ data.frame(censusLabels, triad.census(g))
 
 # Transitivity
 tran <- transitivity(g, type = 'global')
-
 cat('Transitivity: ', tran)
 
 # Plot graphs and save it to file
 fine = 500
-
 
 # Gender graph
 genderColor <- ifelse(V(g)$gender == 1, 'pink', 'lightblue')
@@ -405,6 +403,3 @@ mean(sdInDegreeSim < sdIn)
 mean(sdOutDegreeSim < sdOut)
 mean (recipSim < rec)
 mean (tranSim < tran)
-
-
-
